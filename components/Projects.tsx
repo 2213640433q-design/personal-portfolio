@@ -1,13 +1,16 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PROJECTS, ExtendedProjectItem, TOOL_LOGOS } from '../constants';
-import { ArrowUpRight, X, Maximize2, Layers, Tag, Monitor } from 'lucide-react';
+import { ArrowUpRight, X, Maximize2, Layers, Tag, Monitor, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Projects: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<ExtendedProjectItem | null>(null);
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const openModal = (project: ExtendedProjectItem) => {
     setSelectedProject(project);
+    setCarouselIndex(0);
     document.body.style.overflow = 'hidden';
   };
 
@@ -16,8 +19,25 @@ const Projects: React.FC = () => {
     document.body.style.overflow = 'auto';
   };
 
+  useEffect(() => {
+    setCarouselIndex(0);
+  }, [selectedProject?.id]);
+
+  const handlePrevImage = () => {
+    if (!selectedProject?.galleryImages?.length) return;
+    const total = selectedProject.galleryImages.length;
+    setCarouselIndex((prev) => (prev - 1 + total) % total);
+  };
+
+  const handleNextImage = () => {
+    if (!selectedProject?.galleryImages?.length) return;
+    const total = selectedProject.galleryImages.length;
+    setCarouselIndex((prev) => (prev + 1) % total);
+  };
+
   // Triple the logos to ensure smooth infinite looping within the container
-  const LOGO_SET = [...TOOL_LOGOS, ...TOOL_LOGOS, ...TOOL_LOGOS];
+  const LOGO_TOP_SET = [...TOOL_LOGOS.top, ...TOOL_LOGOS.top];
+  const LOGO_BOTTOM_SET = [...TOOL_LOGOS.bottom, ...TOOL_LOGOS.bottom];
 
   return (
     <section id="projects" className="py-24 bg-zinc-950 overflow-hidden">
@@ -98,7 +118,7 @@ const Projects: React.FC = () => {
             {/* Row 1: Left Scroll */}
             <div className="flex w-full group">
               <div className="flex space-x-12 animate-scroll group-hover:[animation-play-state:paused] min-w-full items-center pl-12">
-                {LOGO_SET.map((logo, idx) => (
+                {LOGO_TOP_SET.map((logo, idx) => (
                   <div key={`r1-${idx}`} className="flex-shrink-0 relative group/logo p-2">
                      <img 
                        src={logo.url} 
@@ -116,7 +136,7 @@ const Projects: React.FC = () => {
             {/* Row 2: Right Scroll (Reverse) */}
             <div className="flex w-full group">
               <div className="flex space-x-12 animate-scroll-reverse group-hover:[animation-play-state:paused] min-w-full items-center pl-12">
-                {LOGO_SET.map((logo, idx) => (
+                {LOGO_BOTTOM_SET.map((logo, idx) => (
                   <div key={`r2-${idx}`} className="flex-shrink-0 relative group/logo p-2">
                      <img 
                        src={logo.url} 
@@ -204,6 +224,54 @@ const Projects: React.FC = () => {
                  )}
                </div>
 
+               {selectedProject.galleryImages && selectedProject.galleryImages.length > 0 && (
+                 <div className="mb-10">
+                   <div className="flex items-center gap-3 mb-4">
+                     <div className="p-2 rounded-lg bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20">
+                       <Monitor size={18} />
+                     </div>
+                     <h4 className="text-lg font-semibold text-white">详情</h4>
+                   </div>
+
+                   <div className="relative group rounded-2xl border border-zinc-800 bg-black/40 p-4">
+                     <img 
+                       src={selectedProject.galleryImages[carouselIndex]} 
+                       alt={`${selectedProject.title} preview ${carouselIndex + 1}`} 
+                       className="w-full h-auto max-h-[520px] object-contain rounded-xl cursor-zoom-in"
+                       onClick={() => setPreviewImage(selectedProject.galleryImages![carouselIndex])}
+                     />
+
+                     <button 
+                       onClick={handlePrevImage}
+                       className="absolute left-6 top-1/2 -translate-y-1/2 bg-black/60 backdrop-blur text-white p-3 rounded-full hover:bg-brand-yellow hover:text-black transition hidden md:flex"
+                       onMouseDown={(e) => e.stopPropagation()}
+                       onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
+                     >
+                       <ChevronLeft size={20} />
+                     </button>
+                     <button 
+                       onClick={handleNextImage}
+                       className="absolute right-6 top-1/2 -translate-y-1/2 bg-black/60 backdrop-blur text-white p-3 rounded-full hover:bg-brand-yellow hover:text-black transition hidden md:flex"
+                       onMouseDown={(e) => e.stopPropagation()}
+                       onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
+                     >
+                       <ChevronRight size={20} />
+                     </button>
+                   </div>
+
+                   <div className="flex justify-center gap-3 mt-4">
+                     {selectedProject.galleryImages.map((image, idx) => (
+                       <button
+                         key={`${selectedProject.id}-dot-${idx}`}
+                         onClick={() => setCarouselIndex(idx)}
+                         className={`w-3 h-3 rounded-full transition ${carouselIndex === idx ? 'bg-brand-yellow shadow-[0_0_10px_rgba(245,197,24,0.8)]' : 'bg-zinc-700 hover:bg-zinc-500'}`}
+                         aria-label={`查看第 ${idx + 1} 张图`}
+                       />
+                     ))}
+                   </div>
+                 </div>
+               )}
+
                {selectedProject.link && (
                  <div className="mt-8 flex justify-end">
                    <a 
@@ -217,6 +285,27 @@ const Projects: React.FC = () => {
                  </div>
                )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {previewImage && (
+        <div 
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 p-6"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div className="relative max-w-5xl w-full flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+            <button 
+              className="absolute -top-4 -right-4 text-white bg-white/10 p-3 rounded-full hover:bg-brand-yellow hover:text-black transition"
+              onClick={() => setPreviewImage(null)}
+            >
+              <X size={24} />
+            </button>
+            <img 
+              src={previewImage} 
+              alt="preview" 
+              className="max-w-full max-h-[80vh] object-contain rounded-3xl shadow-2xl border border-zinc-800"
+            />
           </div>
         </div>
       )}

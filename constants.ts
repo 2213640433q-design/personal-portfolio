@@ -74,6 +74,7 @@ export interface ExtendedProjectItem extends ProjectItem {
   fullDescription: string;
   details?: string[];
   imageUrl: string;
+  galleryImages?: string[];
 }
 
 export const PROJECTS: ExtendedProjectItem[] = [
@@ -93,6 +94,15 @@ export const PROJECTS: ExtendedProjectItem[] = [
     link: "https://xiaohongshu.com",
     // Theme: Exam/Study - High end library/books
     imageUrl: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=1000&auto=format&fit=crop",
+    galleryImages: [
+      "https://i.imgur.com/YJxDEBt.png",
+      "https://i.imgur.com/3Fpm4Pb.png",
+      "https://i.imgur.com/ueK8Gnz.png",
+      "https://i.imgur.com/MdVzzfP.png",
+      "https://i.imgur.com/hD1HInz.png",
+      "https://i.imgur.com/Zp1FamJ.png",
+      "https://i.imgur.com/aweyx63.png"
+    ],
     details: [
       "小红书爆款项目：3天搞定期末复习",
       "数据源：课程PDF、真题、笔记",
@@ -113,7 +123,10 @@ export const PROJECTS: ExtendedProjectItem[] = [
     tags: ["Agent", "RAG", "CoT", "Dify"],
     imagePlaceholderType: "tech",
     // Theme: Legal - Court Session / Classic Hall vibe
-    imageUrl: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=1000&auto=format&fit=crop",
+    imageUrl: "https://i.imgur.com/zqs36Xw.jpeg",
+    galleryImages: [
+      "https://i.imgur.com/TfujDvH.png"
+    ],
     details: [
       "技术栈：Dify, LLM, RAG, Chain of Thought",
       "核心功能：多角色模拟、自动化辩论、风险评估报告",
@@ -122,7 +135,7 @@ export const PROJECTS: ExtendedProjectItem[] = [
   },
   {
     id: "coze",
-    title: "金融投资决策助手",
+    title: "金融个股定盘看板",
     subtitle: "智能投资Agent",
     meta: {
       tech: "Agent",
@@ -133,8 +146,13 @@ export const PROJECTS: ExtendedProjectItem[] = [
     fullDescription: "利用Coze平台构建金融领域专家Agent，集成实时市场数据、财务分析工具与决策模型。通过多轮对话与深度分析，为用户提供数据驱动的投资建议与风险评估，展现AI在金融决策中的应用潜力。",
     tags: ["FinTech", "Coze", "Agent"],
     imagePlaceholderType: "tech",
-    // Theme: Financial Investment - Trading Screen / Data
-    imageUrl: "https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop",
+    // Theme: Financial Investment - Trading desk screens
+    imageUrl: "https://i.imgur.com/g5zLKHb.jpeg",
+    galleryImages: [
+      "https://i.imgur.com/7lBH3r7.png",
+      "https://i.imgur.com/K8wxiuW.png"
+    ],
+    link: "/projects/dingpan/index.html",
     details: [
       "集成工具：实时股市API、财报分析插件",
       "输出：动态图表、投资研报",
@@ -143,7 +161,7 @@ export const PROJECTS: ExtendedProjectItem[] = [
   },
   {
     id: "midjourney",
-    title: "商业级Logo快速迭代",
+    title: "商业级Logo设计",
     subtitle: "AI创意设计",
     meta: {
       tech: "AIGC",
@@ -156,6 +174,13 @@ export const PROJECTS: ExtendedProjectItem[] = [
     imagePlaceholderType: "abstract",
     // Theme: Design Sketches / Wireframes - Hand drawing lines
     imageUrl: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop",
+    galleryImages: [
+      "https://i.imgur.com/3Dnc2XE.png",
+      "https://i.imgur.com/wZLmJpj.png",
+      "https://i.imgur.com/JDQin8e.png",
+      "https://i.imgur.com/c6KU0D9.png",
+      "https://i.imgur.com/9LpCkym.png"
+    ],
     details: [
       "工具链：Midjourney v6 + Vectorizer + Figma",
       "应用：VI系统、包装设计",
@@ -164,7 +189,7 @@ export const PROJECTS: ExtendedProjectItem[] = [
   },
   {
     id: "readdy",
-    title: "摄影器材租赁平台Readdy",
+    title: "摄影器械租赁平台EasyGoods",
     subtitle: "全栈开发",
     meta: {
       tech: "Vibe Coding",
@@ -177,6 +202,12 @@ export const PROJECTS: ExtendedProjectItem[] = [
     imagePlaceholderType: "people",
     // Theme: Photography Equipment - Camera Lens
     imageUrl: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1000&auto=format&fit=crop",
+    galleryImages: [
+      "https://i.imgur.com/WWYopgH.png",
+      "https://i.imgur.com/V4SkEGn.png",
+      "https://i.imgur.com/IlHhCYl.png",
+      "https://i.imgur.com/x7yYcay.png"
+    ],
     details: [
       "设计工具：Axure RP (原型)",
       "开发工具：Cursor AI (Vibe Coding)",
@@ -198,6 +229,11 @@ export const PROJECTS: ExtendedProjectItem[] = [
     imagePlaceholderType: "abstract",
     // Theme: Digital Newspaper/News - Digital Abstract or Paper
     imageUrl: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1000&auto=format&fit=crop",
+    galleryImages: [
+      "https://i.imgur.com/c1VmyDn.png",
+      "https://i.imgur.com/BOEIezR.jpeg",
+      "https://i.imgur.com/k6ZNm16.png"
+    ],
     details: [
       "商业成果：售出17份，验证MVP",
       "技术原理：RSS聚合 -> LLM总结 -> 自动排版",
@@ -234,17 +270,27 @@ export const RADAR_DATA = [
   { subject: 'Workflow', A: 4.8, fullMark: 5 },
 ];
 
-export const TOOL_LOGOS = [
-  { name: "Cursor", url: "https://logo.clearbit.com/cursor.sh" },
-  { name: "Dify", url: "https://logo.clearbit.com/dify.ai" },
-  { name: "Midjourney", url: "https://upload.wikimedia.org/wikipedia/commons/e/ed/Midjourney_Emblem.png" },
-  { name: "Coze", url: "https://logo.clearbit.com/coze.com" },
-  { name: "n8n", url: "https://logo.clearbit.com/n8n.io" },
-  { name: "Figma", url: "https://logo.clearbit.com/figma.com" },
-  { name: "Axure", url: "https://logo.clearbit.com/axure.com" },
-  { name: "Python", url: "https://logo.clearbit.com/python.org" },
-  { name: "Tableau", url: "https://logo.clearbit.com/tableau.com" }
-];
+export const TOOL_LOGOS = {
+  top: [
+    { name: "Cursor", url: "/logos/cursor.png" },
+    { name: "Dify", url: "/logos/logo1.png" },
+    { name: "Midjourney", url: "/logos/logo4.avif" },
+    { name: "Coze", url: "/logos/logo3.png" },
+    { name: "n8n", url: "/logos/n8n.png" },
+    { name: "Figma", url: "/logos/logo2.jpeg" },
+    { name: "Axure", url: "/logos/download.png" }
+  ],
+  bottom: [
+    { name: "Canva", url: "/logos/canva.png" },
+    { name: "Recraft", url: "/logos/recraft.png" },
+    { name: "Notion", url: "/logos/notion.png" },
+    { name: "DeepSeek", url: "/logos/deepseek.png" },
+    { name: "ima", url: "/logos/ima.png" },
+    { name: "即梦AI", url: "/logos/jimeng.png" },
+    { name: "可灵AI", url: "/logos/keling.png" },
+    { name: "Manus", url: "/logos/manus.png" }
+  ]
+};
 
 export const AWARDS: AwardItem[] = [
   { title: "美国大学生数学建模大赛 H奖 (队长)" },

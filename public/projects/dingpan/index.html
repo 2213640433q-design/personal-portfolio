@@ -1,0 +1,627 @@
+以下是更新后的盯盘助手网页，已按要求添加时间戳显示：
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>盯盘助手 - 实时行情分析</title>
+    <script src="https://cdn.tailwindcss.com/3.3.3"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .negative-news {
+            background-color: #fff5f5;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .positive-change {
+            color: #ef4444;
+        }
+        
+        .negative-change {
+            color: #10b981;
+        }
+        
+        .chart-container {
+            height: 280px;
+            width: 100%;
+        }
+        
+        .signal-red {
+            background-color: #fee2e2;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .signal-green {
+            background-color: #dcfce7;
+            border-left: 4px solid #10b981;
+        }
+        
+        .timestamp {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-blue-600 text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <i class="fas fa-chart-line text-xl mr-2"></i>
+                <h1 class="text-xl font-bold">盯盘助手</h1>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#market" class="hover:text-blue-200 transition">实时行情</a>
+                <a href="#news" class="hover:text-blue-200 transition">新闻分析</a>
+                <a href="#fundamentals" class="hover:text-blue-200 transition">基本面指标</a>
+            </div>
+            <button class="md:hidden focus:outline-none" id="mobileMenuButton">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div class="md:hidden hidden bg-blue-700 px-4 py-2" id="mobileMenu">
+            <a href="#market" class="block py-2 hover:text-blue-200 transition">实时行情</a>
+            <a href="#news" class="block py-2 hover:text-blue-200 transition">新闻分析</a>
+            <a href="#fundamentals" class="block py-2 hover:text-blue-200 transition">基本面指标</a>
+        </div>
+    </nav>
+
+    <!-- 主要内容区 -->
+    <main class="container mx-auto px-4 py-6">
+        <!-- 实时行情面板 -->
+        <section id="market" class="mb-12">
+            <div class="flex items-center mb-4">
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-2">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h2 class="text-2xl font-semibold text-gray-800">实时行情</h2>
+                <span class="ml-4 text-sm text-gray-500" id="marketUpdateTime">最后更新: 10:15:23</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- 北方稀土 -->
+                <div class="glass-card p-4 hover:shadow-lg transition">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-bold text-lg">北方稀土</h3>
+                        <span class="text-sm text-gray-500">600111.SH</span>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <p class="text-2xl font-bold" id="northRarePrice">24.56</p>
+                            <p class="text-sm text-gray-500">昨收: 24.20</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg positive-change" id="northRareChange">+0.36 (+1.49%)</p>
+                            <p class="text-sm text-gray-500" id="northRareVolume">成交量: 12.4万手</p>
+                        </div>
+                    </div>
+                    <div class="mt-2 p-2 rounded signal-red" id="northRareSignal">
+                        <i class="fas fa-exclamation-triangle mr-1"></i> 卖出信号
+                        <span class="timestamp block">信号生成: 10:15:20</span>
+                    </div>
+                </div>
+                
+                <!-- 食品饮料ETF -->
+                <div class="glass-card p-4 hover:shadow-lg transition">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-bold text-lg">食品饮料ETF</h3>
+                        <span class="text-sm text-gray-500">515170.SH</span>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <p class="text-2xl font-bold" id="foodETFPrice">1.023</p>
+                            <p class="text-sm text-gray-500">昨收: 1.015</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg positive-change" id="foodETFChange">+0.008 (+0.79%)</p>
+                            <p class="text-sm text-gray-500" id="foodETFVolume">成交量: 8.6万手</p>
+                        </div>
+                    </div>
+                    <div class="mt-2 p-2 rounded signal-green" id="foodETFSignal">
+                        <i class="fas fa-check-circle mr-1"></i> 持有信号
+                        <span class="timestamp block">信号生成: 10:15:18</span>
+                    </div>
+                </div>
+                
+                <!-- 白酒指数 -->
+                <div class="glass-card p-4 hover:shadow-lg transition">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-bold text-lg">白酒指数</h3>
+                        <span class="text-sm text-gray-500">884705.WI</span>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <p class="text-2xl font-bold" id="liquorIndexPrice">8562.34</p>
+                            <p class="text-sm text-gray-500">昨收: 8621.15</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg negative-change" id="liquorIndexChange">-58.81 (-0.68%)</p>
+                            <p class="text-sm text-gray-500" id="liquorIndexVolume">成交量: 156.2亿</p>
+                        </div>
+                    </div>
+                    <div class="mt-2 p-2 rounded signal-green" id="liquorIndexSignal">
+                        <i class="fas fa-check-circle mr-1"></i> 持有信号
+                        <span class="timestamp block">信号生成: 10:15:15</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 新闻分析区 -->
+        <section id="news" class="mb-12">
+            <div class="flex items-center mb-4">
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-2">
+                    <i class="fas fa-newspaper"></i>
+                </div>
+                <h2 class="text-2xl font-semibold text-gray-800">新闻分析</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- 北方稀土新闻 -->
+                <div class="glass-card p-4">
+                    <div class="flex items-center mb-2">
+                        <h3 class="font-bold text-blue-600">北方稀土</h3>
+                        <span class="ml-2 text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full">3条新闻</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="p-3 rounded-lg negative-news">
+                            <p class="font-medium text-gray-800">稀土出口配额缩减，行业面临调整压力</p>
+                            <p class="text-sm text-gray-600 mt-1">商务部最新数据显示，稀土出口配额同比减少15%，可能影响北方稀土海外业务...</p>
+                            <p class="timestamp">发布时间: 2024-05-20 09:30</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-white">
+                            <p class="font-medium text-gray-800">北方稀土与特斯拉签署长期供货协议</p>
+                            <p class="text-sm text-gray-600 mt-1">公司宣布与特斯拉达成三年稀土材料供应协议，预计年销售额增加8亿元...</p>
+                            <p class="timestamp">发布时间: 2024-05-19 14:15</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 食品饮料新闻 -->
+                <div class="glass-card p-4">
+                    <div class="flex items-center mb-2">
+                        <h3 class="font-bold text-blue-600">食品饮料ETF</h3>
+                        <span class="ml-2 text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full">2条新闻</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="p-3 rounded-lg bg-white">
+                            <p class="font-medium text-gray-800">消费复苏迹象明显，食品饮料行业回暖</p>
+                            <p class="text-sm text-gray-600 mt-1">最新数据显示，4月食品饮料行业销售额同比增长12.3%，行业景气度提升...</p>
+                            <p class="timestamp">发布时间: 2024-05-20 08:45</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 白酒指数新闻 -->
+                <div class="glass-card p-4 md:col-span-2">
+                    <div class="flex items-center mb-2">
+                        <h3 class="font-bold text-blue-600">白酒指数</h3>
+                        <span class="ml-2 text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full">4条新闻</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="p-3 rounded-lg negative-news">
+                            <p class="font-medium text-gray-800">白酒消费税改革方案或将出台</p>
+                            <p class="text-sm text-gray-600 mt-1">财政部正在研究白酒消费税改革方案，可能对高端白酒企业利润产生较大影响...</p>
+                            <p class="timestamp">发布时间: 2024-05-20 10:00</p>
+                        </div>
+                        <div class="p-3 rounded-lg negative-news">
+                            <p class="font-medium text-gray-800">消费降级趋势下，白酒销售承压</p>
+                            <p class="text-sm text-gray-600 mt-1">一季度白酒行业数据显示，高端白酒销量同比下降8.6%，中端白酒销量基本持平...</p>
+                            <p class="timestamp">发布时间: 2024-05-19 16:30</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-white">
+                            <p class="font-medium text-gray-800">茅台宣布提高出厂价10%</p>
+                            <p class="text-sm text-gray-600 mt-1">贵州茅台公告称，自6月1日起上调53度飞天茅台出厂价，预计将带动行业价格...</p>
+                            <p class="timestamp">发布时间: 2024-05-18 11:20</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 基本面指标看板 -->
+        <section id="fundamentals">
+            <div class="flex items-center mb-4">
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-2">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <h2 class="text-2xl font-semibold text-gray-800">基本面指标</h2>
+                <span class="ml-4 text-sm text-gray-500" id="fundamentalsUpdateTime">最后更新: 10:15:25</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 稀土价格指数 -->
+                <div class="glass-card p-4">
+                    <h3 class="font-bold text-lg mb-3">稀土价格指数</h3>
+                    <div class="chart-container" id="rareEarthChart"></div>
+                    <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+                        <div class="p-2 bg-blue-50 rounded">
+                            <p class="text-sm text-gray-600">氧化镨钕</p>
+                            <p class="font-bold" id="prNdPrice">¥485,000/吨</p>
+                        </div>
+                        <div class="p-2 bg-blue-50 rounded">
+                            <p class="text-sm text-gray-600">氧化镝</p>
+                            <p class="font-bold" id="dyPrice">¥2,150/公斤</p>
+                        </div>
+                        <div class="p-2 bg-blue-50 rounded">
+                            <p class="text-sm text-gray-600">氧化铽</p>
+                            <p class="font-bold" id="tbPrice">¥6,800/公斤</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 消费数据图表 -->
+                <div class="glass-card p-4">
+                    <h3 class="font-bold text-lg mb-3">食品饮料消费数据</h3>
+                    <div class="chart-container" id="consumptionChart"></div>
+                    <div class="mt-4 grid grid-cols-2 gap-2 text-center">
+                        <div class="p-2 bg-blue-50 rounded">
+                            <p class="text-sm text-gray-600">社零总额</p>
+                            <p class="font-bold" id="retailTotal">¥3.82万亿</p>
+                        </div>
+                        <div class="p-2 bg-blue-50 rounded">
+                            <p class="text-sm text-gray-600">同比增长</p>
+                            <p class="font-bold text-green-600" id="retailGrowth">+8.5%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="bg-gray-100 py-6 mt-12">
+        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+            <p>created by <a href="https://space.coze.cn" class="text-blue-600 hover:underline">coze space</a></p>
+            <p class="mt-1">页面内容均由 AI 生成，仅供参考</p>
+        </div>
+    </footer>
+    
+    <script>
+        // 移动端菜单切换
+        document.getElementById('mobileMenuButton').addEventListener('click', function() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+            
+            // 切换图标
+            const icon = this.querySelector('i');
+            if (menu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                
+                // 如果是移动端菜单中的链接，点击后关闭菜单
+                if (window.innerWidth < 768) {
+                    document.getElementById('mobileMenu').classList.add('hidden');
+                    document.querySelector('#mobileMenuButton i').classList.remove('fa-times');
+                    document.querySelector('#mobileMenuButton i').classList.add('fa-bars');
+                }
+            });
+        });
+        
+        // 初始化ECharts图表
+        function initCharts() {
+            // 稀土价格指数图表
+            const rareEarthChart = echarts.init(document.getElementById('rareEarthChart'));
+            rareEarthChart.setOption({
+                tooltip: {
+                    trigger: 'axis'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['1月', '2月', '3月', '4月', '5月'],
+                    axisLine: {
+                        lineStyle: {
+                            color: '#e5e7eb'
+                        }
+                    },
+                    axisLabel: {
+                        color: '#6b7280'
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLine: {
+                        show: false
+                    },
+                    axisLabel: {
+                        color: '#6b7280'
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: '#e5e7eb'
+                        }
+                    }
+                },
+                series: [{
+                    data: [180, 195, 210, 225, 240],
+                    type: 'line',
+                    smooth: true,
+                    lineStyle: {
+                        width: 3,
+                        color: '#3b82f6'
+                    },
+                    areaStyle: {
+                        color: {
+                            type: 'linear',
+                            x: 0,
+                            y: 0,
+                            x2: 0,
+                            y2: 1,
+                            colorStops: [{
+                                offset: 0,
+                                color: 'rgba(59, 130, 246, 0.2)'
+                            }, {
+                                offset: 1,
+                                color: 'rgba(59, 130, 246, 0)'
+                            }]
+                        }
+                    },
+                    symbol: 'circle',
+                    symbolSize: 8,
+                    itemStyle: {
+                        color: '#3b82f6',
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }
+                }],
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    top: '10%',
+                    containLabel: true
+                }
+            });
+            
+            // 消费数据图表
+            const consumptionChart = echarts.init(document.getElementById('consumptionChart'));
+            consumptionChart.setOption({
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['食品', '饮料', '酒类', '调味品'],
+                    axisLine: {
+                        lineStyle: {
+                            color: '#e5e7eb'
+                        }
+                    },
+                    axisLabel: {
+                        color: '#6b7280'
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLine: {
+                        show: false
+                    },
+                    axisLabel: {
+                        color: '#6b7280'
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: '#e5e7eb'
+                        }
+                    }
+                },
+                series: [{
+                    data: [1250, 980, 860, 730],
+                    type: 'bar',
+                    barWidth: '40%',
+                    itemStyle: {
+                        color: function(params) {
+                            const colorList = ['#3b82f6', '#6366f1', '#a855f7', '#d946ef'];
+                            return colorList[params.dataIndex];
+                        },
+                        borderRadius: [4, 4, 0, 0]
+                    }
+                }],
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    top: '10%',
+                    containLabel: true
+                }
+            });
+            
+            // 窗口大小变化时重新调整图表大小
+            window.addEventListener('resize', function() {
+                rareEarthChart.resize();
+                consumptionChart.resize();
+            });
+        }
+        
+        // WebSocket连接
+        function connectWebSocket() {
+            const socket = new WebSocket('ws://localhost:5000');
+            
+            socket.onopen = function(e) {
+                console.log('WebSocket连接已建立');
+            };
+            
+            socket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                console.log('收到数据:', data);
+                
+                // 更新行情数据
+                if (data.type === 'market') {
+                    updateMarketData(data);
+                }
+                
+                // 更新基本面数据
+                if (data.type === 'fundamental') {
+                    updateFundamentalData(data);
+                }
+            };
+            
+            socket.onclose = function(event) {
+                if (event.wasClean) {
+                    console.log(`连接关闭，代码=${event.code} 原因=${event.reason}`);
+                } else {
+                    console.log('连接中断');
+                    // 尝试重新连接
+                    setTimeout(connectWebSocket, 5000);
+                }
+            };
+            
+            socket.onerror = function(error) {
+                console.log(`WebSocket错误: ${error.message}`);
+            };
+        }
+        
+        // 更新行情数据
+        function updateMarketData(data) {
+            // 更新市场最后更新时间
+            const now = new Date();
+            const timeString = now.toTimeString().substring(0, 8);
+            document.getElementById('marketUpdateTime').textContent = `最后更新: ${timeString}`;
+            
+            // 北方稀土
+            if (data.stock === '600111.SH') {
+                document.getElementById('northRarePrice').textContent = data.price.toFixed(2);
+                const change = data.price - data.prevClose;
+                const changePercent = (change / data.prevClose * 100).toFixed(2);
+                document.getElementById('northRareChange').textContent = 
+                    `${change >= 0 ? '+' : ''}${change.toFixed(2)} (${changePercent}%)`;
+                document.getElementById('northRareVolume').textContent = `成交量: ${(data.volume / 10000).toFixed(1)}万手`;
+                
+                // 更新信号
+                updateSignal('northRareSignal', data.signal);
+            }
+            
+            // 食品饮料ETF
+            if (data.stock === '515170.SH') {
+                document.getElementById('foodETFPrice').textContent = data.price.toFixed(3);
+                const change = data.price - data.prevClose;
+                const changePercent = (change / data.prevClose * 100).toFixed(2);
+                document.getElementById('foodETFChange').textContent = 
+                    `${change >= 0 ? '+' : ''}${change.toFixed(3)} (${changePercent}%)`;
+                document.getElementById('foodETFVolume').textContent = `成交量: ${(data.volume / 10000).toFixed(1)}万手`;
+                
+                // 更新信号
+                updateSignal('foodETFSignal', data.signal);
+            }
+            
+            // 白酒指数
+            if (data.stock === '884705.WI') {
+                document.getElementById('liquorIndexPrice').textContent = data.price.toFixed(2);
+                const change = data.price - data.prevClose;
+                const changePercent = (change / data.prevClose * 100).toFixed(2);
+                document.getElementById('liquorIndexChange').textContent = 
+                    `${change >= 0 ? '+' : ''}${change.toFixed(2)} (${changePercent}%)`;
+                document.getElementById('liquorIndexVolume').textContent = `成交量: ${(data.volume / 100000000).toFixed(1)}亿`;
+                
+                // 更新信号
+                updateSignal('liquorIndexSignal', data.signal);
+            }
+        }
+        
+        // 更新基本面数据
+        function updateFundamentalData(data) {
+            // 更新基本面最后更新时间
+            const now = new Date();
+            const timeString = now.toTimeString().substring(0, 8);
+            document.getElementById('fundamentalsUpdateTime').textContent = `最后更新: ${timeString}`;
+            
+            // 稀土价格
+            if (data.rareEarth) {
+                document.getElementById('prNdPrice').textContent = `¥${data.rareEarth.prNd.toLocaleString()}/吨`;
+                document.getElementById('dyPrice').textContent = `¥${data.rareEarth.dy.toLocaleString()}/公斤`;
+                document.getElementById('tbPrice').textContent = `¥${data.rareEarth.tb.toLocaleString()}/公斤`;
+                
+                // 更新图表数据
+                const rareEarthChart = echarts.getInstanceByDom(document.getElementById('rareEarthChart'));
+                const option = rareEarthChart.getOption();
+                option.series[0].data = data.rareEarth.indexData;
+                rareEarthChart.setOption(option);
+            }
+            
+            // 消费数据
+            if (data.consumption) {
+                document.getElementById('retailTotal').textContent = `¥${(data.consumption.total / 100000000).toFixed(2)}万亿`;
+                document.getElementById('retailGrowth').textContent = 
+                    `${data.consumption.growth >= 0 ? '+' : ''}${data.consumption.growth.toFixed(1)}%`;
+                
+                // 更新图表数据
+                const consumptionChart = echarts.getInstanceByDom(document.getElementById('consumptionChart'));
+                const option = consumptionChart.getOption();
+                option.series[0].data = data.consumption.categoryData;
+                consumptionChart.setOption(option);
+            }
+        }
+        
+        // 更新信号显示
+        function updateSignal(elementId, signal) {
+            const element = document.getElementById(elementId);
+            const now = new Date();
+            const timeString = now.toTimeString().substring(0, 8);
+            
+            if (signal === 'sell') {
+                element.className = 'mt-2 p-2 rounded signal-red';
+                element.innerHTML = `<i class="fas fa-exclamation-triangle mr-1"></i> 卖出信号
+                    <span class="timestamp block">信号生成: ${timeString}</span>`;
+            } else if (signal === 'hold') {
+                element.className = 'mt-2 p-2 rounded signal-green';
+                element.innerHTML = `<i class="fas fa-check-circle mr-1"></i> 持有信号
+                    <span class="timestamp block">信号生成: ${timeString}</span>`;
+            }
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+            connectWebSocket();
+            
+            // 设置初始时间
+            const now = new Date();
+            const timeString = now.toTimeString().substring(0, 8);
+            document.getElementById('marketUpdateTime').textContent = `最后更新: ${timeString}`;
+            document.getElementById('fundamentalsUpdateTime').textContent = `最后更新: ${timeString}`;
+        });
+    </script>
+</body>
+</html>
