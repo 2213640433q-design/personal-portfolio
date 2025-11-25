@@ -6,7 +6,7 @@ import { Message } from '../types';
 const ChatBot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', text: "你好！我是刘昕林的AI助手。由于目前我是离线模式（无API Key），我无法真正回答问题，但您可以浏览网站了解更多。" }
+    { role: 'model', text: "你好！我是刘昕林的AI分身。关于我的项目经验、技能或背景，您有任何感兴趣的都可以问我。" }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -15,7 +15,7 @@ const ChatBot: React.FC = () => {
   // Check if API key exists to adjust default message
   useEffect(() => {
      if (process.env.API_KEY) {
-        setMessages([{ role: 'model', text: "你好！我是刘昕林的AI助手。关于他的项目经验、技能或背景，您都可以问我。" }]);
+        setMessages([{ role: 'model', text: "你好！我是刘昕林的AI分身。关于我的项目经验、技能或背景，您有任何感兴趣的都可以问我。" }]);
      }
   }, []);
 
