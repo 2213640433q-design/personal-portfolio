@@ -59,7 +59,7 @@ const ChatBot: React.FC = () => {
           onClick={() => setIsOpen(true)}
           className="group flex items-center gap-3 bg-brand-yellow text-black px-5 py-3 rounded-full shadow-lg shadow-yellow-500/20 hover:scale-105 transition-all duration-300"
         >
-          <span className="font-semibold">AI 对话</span>
+          <span className="font-semibold">我的AI分身</span>
           <MessageSquare size={20} className="group-hover:rotate-12 transition-transform" />
         </button>
       )}
